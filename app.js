@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const { DatabaseSync } = require('node:sqlite');
-const db = new DatabaseSync('app.db');
+const db = new DatabaseSync(process.env.DB_FILE || 'app.db');
 
 db.exec('PRAGMA foreign_keys = ON'); // вмикаємо зв'язки між таблицями
 db.exec(`
@@ -76,7 +76,10 @@ app.get('/orders', (req, res) => {
   res.json(orders);
 });
 
-app.listen(3000, () => {
-  console.log('Server is running at http://127.0.0.1:3000');
-});
+if (require.main === module) {
+  app.listen(3000, () => {
+    console.log('Server is running at http://127.0.0.1:3000');
+  });
+}
+module.exports = app;
 
